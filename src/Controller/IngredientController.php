@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Ingredient;
+use App\Form\IngredientType;
 use App\Repository\IngredientRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,6 +32,57 @@ class IngredientController extends AbstractController
 
         return $this->render('pages/ingredient/index.html.twig', [
             'ingredients' => $ingredients,
+        ]);
+    }
+
+    /**
+     * This controller show a form with create an ingredient.
+     */
+
+    /**
+     * @Route("/ingredient/nouveau", name="ingredient.new", methods={"GET","POST"})
+     */
+    public function new(Request $request,
+    EntityManagerInterface $manager): Response
+    {
+        $ingredient = new Ingredient();
+        $form = $this->createForm(IngredientType::class, $ingredient);
+        /*
+         * Test 1
+         *
+         * Mettre Jambon et 37,20 dans le formulaire
+         * $form->handleRequest($request);
+         *   if ($form->isSubmitted() && $form->isValid()) {
+         *      dd($form->getData());
+         * }
+        */
+
+        /*
+         * Test 2
+         *
+         * $form->handleRequest($request);
+        *if ($form->isSubmitted() && $form->isValid()) {
+         *   $ingredient = $form->getData();
+          *  dd($ingredient);
+        *}
+         *
+         */
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ingredient = $form->getData();
+            $manager->persist($ingredient);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Votre ingrédient a été créé avec succès!');
+
+            return $this->redirectToRoute('ingredient.index');
+        }
+
+        return $this->render('pages/ingredient/new.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }
