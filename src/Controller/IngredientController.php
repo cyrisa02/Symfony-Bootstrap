@@ -85,4 +85,65 @@ class IngredientController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    /**
+     * This controller shows a form with update an ingredient.
+     */
+
+    /**
+     * @Route("/ingredient/edition/{id}", name="ingredient.edit", methods={"GET","POST"})
+     */
+    public function edit(IngredientRepository $repository, Ingredient $ingredient,
+     int $id,
+     Request $request,
+      EntityManagerInterface $manager
+      ): Response {
+        $ingredient = $repository->findOneBy(['id' => $id]);
+        $form = $this->createForm(IngredientType::class, $ingredient);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ingredient = $form->getData();
+            $manager->persist($ingredient);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Votre ingrédient a été modifié avec succès!');
+
+            return $this->redirectToRoute('ingredient.index');
+        }
+
+        return $this->render('pages/ingredient/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/ingredient/suppression/{id}", name="ingredient.delete", methods={"GET"})
+     */
+    public function delete(
+        EntityManagerInterface $manager,
+        Ingredient $ingredient,
+    int $id
+    ): Response {
+        // if (!$ingredient) {
+        //     $this->addFlash(
+        //         'warning',
+        //         'L\'ingrédient n\'a pas été trouvé!');
+        // return $this->redirectToRoute('ingredient.index');
+        // } Ne fonctionne pas
+
+        $manager->remove($ingredient);
+        $manager->flush();
+
+        $this->addFlash(
+            'success',
+            'Votre ingrédient a été supprimé avec succès!');
+
+        return $this->redirectToRoute('ingredient.index');
+
+        //return $this->render('pages/ingredient/new.html.twig', [
+          //  'form' => $form->createView(),
+        //]);
+    }
 }
