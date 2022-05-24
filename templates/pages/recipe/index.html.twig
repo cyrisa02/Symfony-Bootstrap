@@ -9,9 +9,9 @@
 
 			<h1>Mes Recettes</h1>
 
-			{# <a href= "{{ path ("recipe.new")}}" class= "btn btn-primary">
+			 <a href= "{{ path ("recipe.new")}}" class= "btn btn-primary">
 			Créer une recette
-			</a>  #}
+			</a>  
 				{% for message in app.flashes('success')%}
 				<div class="alert alert-success mt-4">
 					{{message}}

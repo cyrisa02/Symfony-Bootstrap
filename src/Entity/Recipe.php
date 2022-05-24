@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Entity\Ingredient;
+
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\RecipeRepository;
 use Doctrine\Common\Collections\Collection;
